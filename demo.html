@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Document</title>
+    <style>
+    </style>
+</head>
+<body>
+    <script>
+      var localStorageData = function (key) {
+        this.key = key
+      }
+      localStorageData.prototype = {
+        add: function (value) {
+          this.value = value || [];
+          var curTime = new Date().getTime();
+          console.log(this.key)
+          localStorage.setItem(this.key, JSON.stringify({data: value, time: curTime}))
+        },
+        get: function (exp) {
+          var data = localStorage.getItem(this.key);
+          console.log(data)
+          var dataObj = JSON.parse(data)
+          var _data = dataObj.data
+          //已过期
+          console.log(new Date().getTime() - dataObj.time > exp);
+          if (new Date().getTime() - dataObj.time > exp) {
+            console.log('localStorage到期!');
+          } else {
+            return JSON.stringify(_data)
+          }
+        },
+        remove: function (key) {
+          localStorage.removeItem(key);
+        },
+        clear: function () {
+          localStorage.clear();
+        }
+      }
+      var data = [
+        {"name": "a", "pwd": "123"},
+        {"name": "b", "pwd": "aaa"}
+      ]
+      var nlsp = new localStorageData("users");
+      nlsp.add(data)
+      var users = nlsp.get(0);//这里传入的是过期时间(毫秒)
+      console.log(users);
+</script>
+</body>
+</html>
